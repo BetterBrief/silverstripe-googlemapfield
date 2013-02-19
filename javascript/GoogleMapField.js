@@ -1,0 +1,106 @@
+/**
+ * GoogleMapField.js
+ * @author Will Morgan <will.morgan@betterbrief.co.uk>
+ */
+(function($) {
+
+	// Run this code for every googlemapfield
+	function initField() {
+		var field = $(this),
+			fieldID = field.attr('data-field-id'), // identify its settings
+			options = window.googlemapfieldOptions[fieldID],
+			centre = new google.maps.LatLng(options.coords[0], options.coords[1]),
+			options = {
+				streetViewControl: false,
+				zoom: options.map.zoom,
+				center: centre,
+				mapTypeId: google.maps.MapTypeId[options.map.mapTypeId]
+			},
+			mapElement = field.find('.googlemapfield-map'),
+			map = new google.maps.Map(mapElement[0], options),
+			marker = new google.maps.Marker({
+				position: map.getCenter(),
+				map: map,
+				title: "Position",
+				draggable: true
+			}),
+			latField = field.find('.googlemapfield-latfield'),
+			lngField = field.find('.googlemapfield-lngfield'),
+			search = field.find('.googlemapfield-searchfield');
+
+		// Update the hidden fields and mark as changed
+		function updateField(latLng) {
+			var latCoord = latLng.lat(),
+				lngCoord = latLng.lng();
+
+			window.googlemapfieldOptions[fieldID].coords = [latCoord, lngCoord];
+
+			latField.val(latCoord);
+			lngField.val(lngCoord);
+			// Mark as changed(?)
+			$('.cms-edit-form').addClass('changed');
+		}
+
+		function centreOnMarker() {
+			var center = marker.getPosition();
+			map.panTo(center);
+			updateField(center);
+		}
+
+		function mapClicked(ev) {
+			var center = ev.latLng;
+			marker.setPosition(center);
+			updateField(center);
+		}
+
+		function geoSearchComplete(result, status) {
+			if(status !== google.maps.GeocoderStatus.OK) {
+				alert('sorry bro');
+				return;
+			}
+			marker.setPosition(result[0].geometry.location);
+			centreOnMarker();
+		}
+
+		function searchReady(ev) {
+			ev.preventDefault();
+			ev.stopPropagation();
+			var searchText = search.val(),
+				geocoder;
+			if(searchText) {
+				geocoder = new google.maps.Geocoder();
+				geocoder.geocode({ address: searchText }, geoSearchComplete);
+			}
+		}
+
+		// Populate the fields to the current centre
+		updateField(map.getCenter());
+
+		google.maps.event.addListener(marker, 'dragend', centreOnMarker);
+
+		google.maps.event.addListener(map, 'click', mapClicked);
+
+		search.on('change', searchReady);
+
+	}
+
+	function init() {
+		var mapFields = $('.googlemapfield');
+		mapFields.each(initField);
+	}
+
+	// Export the init function
+	window.googlemapfieldInit = init;
+
+	// Set the init method to re-run if the page is saved or pjaxed
+	$.entwine('ss', function($) {
+		$('.googlemapfield').entwine({
+			onmatch: function() {
+				if(google !== undefined) {
+					googlemapfieldInit();
+				}
+			}
+		});
+	});
+
+}(jQuery));

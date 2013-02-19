@@ -1,0 +1,9 @@
+.googlemapfield {
+	position: relative;
+}
+.googlemapfield .controls {
+}
+.googlemapfield-map {
+	width: 640px;
+	height: 480px;
+}
