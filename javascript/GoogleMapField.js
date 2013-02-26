@@ -4,11 +4,13 @@
  */
 (function($) {
 
+	var gmapsAPILoaded = false;
+
 	// Run this code for every googlemapfield
 	function initField() {
 		var field = $(this),
 			fieldID = field.attr('data-field-id'), // identify its settings
-			options = window.googlemapfieldOptions[fieldID],
+			options = JSON.parse(field.attr('data-settings')),
 			centre = new google.maps.LatLng(options.coords[0], options.coords[1]),
 			options = {
 				streetViewControl: false,
@@ -33,7 +35,7 @@
 			var latCoord = latLng.lat(),
 				lngCoord = latLng.lng();
 
-			window.googlemapfieldOptions[fieldID].coords = [latCoord, lngCoord];
+			options.coords = [latCoord, lngCoord];
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
@@ -55,7 +57,7 @@
 
 		function geoSearchComplete(result, status) {
 			if(status !== google.maps.GeocoderStatus.OK) {
-				alert('sorry bro');
+				console.warn('Geocoding search failed');
 				return;
 			}
 			marker.setPosition(result[0].geometry.location);
@@ -90,14 +92,17 @@
 	}
 
 	// Export the init function
-	window.googlemapfieldInit = init;
+	window.googlemapfieldInit = function() {
+		gmapsAPILoaded = true;
+		init();
+	}
 
 	// Set the init method to re-run if the page is saved or pjaxed
 	$.entwine('ss', function($) {
 		$('.googlemapfield').entwine({
 			onmatch: function() {
-				if(google !== undefined) {
-					googlemapfieldInit();
+				if(gmapsAPILoaded) {
+					init();
 				}
 			}
 		});

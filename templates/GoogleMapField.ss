@@ -1,4 +1,4 @@
-<div class="googlemapfield $extraClass" data-field-id="$Name">
+<div class="googlemapfield $extraClass" $AttributesHTML>
 	<div class="googlemapfield-controls">
 		<% loop ChildFields %>
 		$Field

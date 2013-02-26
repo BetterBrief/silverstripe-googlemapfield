@@ -48,11 +48,8 @@ class GoogleMapField extends FormField {
 
 	public function Field($properties = array()) {
 		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
-		Requirements::javascript('//maps.google.com/maps/api/js?sensor=false&callback=googlemapfieldInit');
+		Requirements::javascript('//google.com/maps/api/js?sensor=false&callback=googlemapfieldInit');
 		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
-		if(!self::$js_inserted) {
-			Requirements::insertHeadTags('<script>window.googlemapfieldOptions = {};</script>');
-		}
 		$jsOptions = array(
 			'coords' => array($this->getLatData(), $this->getLngData()),
 			'map' => array(
@@ -61,7 +58,7 @@ class GoogleMapField extends FormField {
 			),
 		);
 		$jsOptions = array_merge($this->options, $jsOptions);
-		Requirements::insertHeadTags('<script>googlemapfieldOptions[\''.$this->Name.'\'] = '.json_encode($jsOptions).';</script>');
+		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
 		return parent::Field($properties);
 	}
 
