@@ -31,7 +31,7 @@
 			search = field.find('.googlemapfield-searchfield');
 
 		// Update the hidden fields and mark as changed
-		function updateField(latLng) {
+		function updateField(latLng, init) {
 			var latCoord = latLng.lat(),
 				lngCoord = latLng.lng();
 
@@ -39,8 +39,10 @@
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
-			// Mark as changed(?)
-			$('.cms-edit-form').addClass('changed');
+			if (!init) {
+				// Mark as changed(?)
+				$('.cms-edit-form').addClass('changed');
+			}
 		}
 
 		function centreOnMarker() {
@@ -76,7 +78,7 @@
 		}
 
 		// Populate the fields to the current centre
-		updateField(map.getCenter());
+		updateField(map.getCenter(), true);
 
 		google.maps.event.addListener(marker, 'dragend', centreOnMarker);
 
