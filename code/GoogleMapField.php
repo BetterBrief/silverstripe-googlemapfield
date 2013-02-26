@@ -57,7 +57,7 @@ class GoogleMapField extends FormField {
 				'mapTypeId' => 'ROADMAP',
 			),
 		);
-		$jsOptions = array_merge($this->options, $jsOptions);
+		$jsOptions = array_merge($jsOptions, $this->options);
 		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
 		return parent::Field($properties);
 	}
