@@ -82,7 +82,14 @@
 
 		google.maps.event.addListener(map, 'click', mapClicked);
 
-		search.on('change', searchReady);
+		search.on({
+			'change': searchReady,
+			'keydown': function(ev) {
+				if(ev.which == 13) {
+					searchReady(ev);
+				}
+			}
+		});
 
 	}
 
