@@ -25,9 +25,9 @@
 				title: "Position",
 				draggable: true
 			}),
-			latField = field.find('.googlemapfield-latfield'),
-			lngField = field.find('.googlemapfield-lngfield'),
-			search = field.find('.googlemapfield-searchfield');
+			latField = field.find('input.googlemapfield-latfield'),
+			lngField = field.find('input.googlemapfield-lngfield'),
+			search = field.find('input.googlemapfield-searchfield');
 
 		// Update the hidden fields and mark as changed
 		function updateField(latLng, init) {
