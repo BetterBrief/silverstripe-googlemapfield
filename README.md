@@ -6,4 +6,4 @@ Displays a map using the Google Maps API. The user may then choose where to plac
 
 You can also search for locations using the search box, which uses the Google Maps Geocoding API.
 
-Supports SilverStripe 3.1.
+Supports SilverStripe 3.1, 3.0 (branch "master") and 2.4 (branch "2.4")
