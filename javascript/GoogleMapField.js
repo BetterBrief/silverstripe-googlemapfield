@@ -9,7 +9,6 @@
 	// Run this code for every googlemapfield
 	function initField() {
 		var field = $(this),
-			fieldID = field.attr('data-field-id'), // identify its settings
 			options = JSON.parse(field.attr('data-settings')),
 			centre = new google.maps.LatLng(options.coords[0], options.coords[1]),
 			options = {
@@ -39,10 +38,6 @@
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
-			if (!init) {
-				// Mark as changed(?)
-				$('.cms-edit-form').addClass('changed');
-			}
 		}
 
 		function centreOnMarker() {
@@ -84,7 +79,7 @@
 
 		google.maps.event.addListener(map, 'click', mapClicked);
 
-		search.on({
+		search.bind({
 			'change': searchReady,
 			'keydown': function(ev) {
 				if(ev.which == 13) {
@@ -103,18 +98,27 @@
 	// Export the init function
 	window.googlemapfieldInit = function() {
 		gmapsAPILoaded = true;
-		init();
+		$(function() {
+			init();
+		});
 	}
 
-	// Set the init method to re-run if the page is saved or pjaxed
-	$.entwine('ss', function($) {
-		$('.googlemapfield').entwine({
-			onmatch: function() {
-				if(gmapsAPILoaded) {
-					init();
-				}
-			}
-		});
-	});
+	window.gmapsAPILoaded = gmapsAPILoaded;
 
 }(jQuery));
+
+Behaviour.register({
+	'#Form_EditForm': {
+		initialize: function() {
+			this.observeMethod('PageLoaded', this.pageLoaded);
+			//this.observeMethod('BeforeSave', this.beforeSave);
+			this.pageLoaded();
+		},
+		pageLoaded: function() {
+			try {
+				googlemapfieldInit();
+			}
+			catch(e) { /* i am sorry JS hater community please forgive me */ }
+		}
+	}
+});

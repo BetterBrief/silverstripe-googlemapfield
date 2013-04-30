@@ -34,32 +34,29 @@ class GoogleMapField extends FormField {
 		$name = sprintf('%s_%s_%s', $data->class, $fieldNames['lat'], $fieldNames['lng']);
 
 		// Create the latitude/longitude hidden fields
-		$this->children = new FieldList(
-			$this->latField = HiddenField::create($name.'[Latitude]', 'Lat', $this->getLatData())->addExtraClass('googlemapfield-latfield'),
-			$this->lngField = HiddenField::create($name.'[Longitude]','Lng', $this->getLngData())->addExtraClass('googlemapfield-lngfield'),
-			TextField::create('Search')
-				->addExtraClass('googlemapfield-searchfield')
-				->setAttribute('placeholder', 'Search for a location')
+		$this->children = new FieldSet(
+			$this->latField = new HiddenField($name.'[Latitude]', 'Lat', $this->getLatData()),
+			$this->lngField = new HiddenField($name.'[Longitude]','Lng', $this->getLngData()),
+			$textField = new TextField('Search', 'Search for a location')
 		);
+
+		$this->latField->addExtraClass('googlemapfield-latfield');
+		$this->lngField->addExtraClass('googlemapfield-lngfield');
+
+		$textField->addExtraClass('googlemapfield-searchfield');
 
 		parent::__construct($name, $title);
 
 	}
 
-	public function Field($properties = array()) {
-		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
-		Requirements::javascript('//google.com/maps/api/js?sensor=false&callback=googlemapfieldInit');
+	public function FieldHolder() {
 		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
-		$jsOptions = array(
-			'coords' => array($this->getLatData(), $this->getLngData()),
-			'map' => array(
-				'zoom' => 8,
-				'mapTypeId' => 'ROADMAP',
-			),
-		);
-		$jsOptions = array_merge($jsOptions, $this->options);
-		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
-		return parent::Field($properties);
+		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
+		Requirements::javascript('https://google.com/maps/api/js?sensor=false&callback=googlemapfieldInit');
+
+		return $this->renderWith('GoogleMapField', array(
+			'SettingsJSON' => Convert::raw2att($this->getJSONOptions()),
+		));
 	}
 
 	function setValue($value) {
@@ -99,6 +96,17 @@ class GoogleMapField extends FormField {
 
 	public function getOption($option) {
 		return $this->options[$option];
+	}
+
+	public function getJSONOptions() {
+		$jsOptions = array(
+			'coords' => array($this->getLatData(), $this->getLngData()),
+			'map' => array(
+				'zoom' => 8,
+				'mapTypeId' => 'ROADMAP',
+			),
+		);
+		return Convert::array2json(array_merge($jsOptions, $this->options));
 	}
 
 }
