@@ -35,15 +35,14 @@ class GoogleMapField extends FormField {
 
 		// Create the latitude/longitude hidden fields
 		$this->children = new FieldList(
-			$this->latField = HiddenField::create($name.'[Latitude]', 'Lat', $this->getLatData())->addExtraClass('googlemapfield-latfield'),
-			$this->lngField = HiddenField::create($name.'[Longitude]','Lng', $this->getLngData())->addExtraClass('googlemapfield-lngfield'),
+			$this->latField = HiddenField::create($name . '[' . $fieldNames['lat'] . ']', 'Lat', $this->getLatData())->addExtraClass('googlemapfield-latfield'),
+			$this->lngField = HiddenField::create($name . '[' . $fieldNames['lng'] . ']', 'Lng', $this->getLngData())->addExtraClass('googlemapfield-lngfield'),
 			TextField::create('Search')
 				->addExtraClass('googlemapfield-searchfield')
 				->setAttribute('placeholder', 'Search for a location')
 		);
 
 		parent::__construct($name, $title);
-
 	}
 
 	public function Field($properties = array()) {
@@ -57,6 +56,7 @@ class GoogleMapField extends FormField {
 				'mapTypeId' => 'ROADMAP',
 			),
 		);
+
 		$jsOptions = array_merge($jsOptions, $this->options);
 		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
 		return parent::Field($properties);
