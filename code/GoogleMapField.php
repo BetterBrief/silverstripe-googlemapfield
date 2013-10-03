@@ -14,6 +14,7 @@ class GoogleMapField extends FormField {
 				'lat' => 'Lat',
 				'lng' => 'Lng',
 			),
+            'zoom' => 8
 		),
 		$js_inserted = false;
 
@@ -52,7 +53,7 @@ class GoogleMapField extends FormField {
 		$jsOptions = array(
 			'coords' => array($this->getLatData(), $this->getLngData()),
 			'map' => array(
-				'zoom' => 8,
+				'zoom' => $this->getZoomData(),
 				'mapTypeId' => 'ROADMAP',
 			),
 		);
@@ -96,6 +97,10 @@ class GoogleMapField extends FormField {
 		$fieldNames = $this->getOption('fieldNames');
 		return $this->data->$fieldNames['lng'];
 	}
+
+    public function getZoomData() {
+        return $this->options['zoom'];
+    }
 
 	public function getOption($option) {
 		return $this->options[$option];
