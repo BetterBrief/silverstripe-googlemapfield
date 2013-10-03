@@ -71,6 +71,7 @@ class GoogleMapField extends FormField {
 	public function saveInto(DataObjectInterface $record) {
 		$record->setCastedField($this->getLatField(), $this->latField->dataValue());
 		$record->setCastedField($this->getLngField(), $this->lngField->dataValue());
+		return $this;
 	}
 
 	public function getChildFields() {
@@ -97,8 +98,43 @@ class GoogleMapField extends FormField {
 		return $this->data->$fieldNames['lng'];
 	}
 
-	public function getOption($option) {
-		return $this->options[$option];
+	public function getOption($name) {
+		// Quicker execution path for "."-free names
+		if (strpos($name, '.') === false) {
+			if (isset($this->options[$name])) return $this->options[$name];
+		} else {
+			$names = explode('.', $name);
+
+			$var = $this->options;
+
+			foreach($names as $n) {
+				if(!isset($var[$n])) {
+					return null;
+				}
+				$var = $var[$n];
+			}
+
+			return $var;
+		}
+	}
+
+	public function setOption($name, $val) {
+		// Quicker execution path for "."-free names
+		if(strpos($name,'.') === false) {
+			$this->options[$name] = $val;
+		} else {
+			$names = explode('.', $name);
+
+			// We still want to do this even if we have strict path checking for legacy code
+			$var = &$this->options;
+
+			foreach($names as $n) {
+				$var = &$var[$n];
+			}
+
+			$var = $val;
+		}
+		return $this;
 	}
 
 }
