@@ -57,7 +57,7 @@ class GoogleMapField extends FormField {
 			),
 		);
 
-		$jsOptions = array_merge($jsOptions, $this->options);
+		$jsOptions = array_replace_recursive($jsOptions, $this->options);
 		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
 		return parent::Field($properties);
 	}
