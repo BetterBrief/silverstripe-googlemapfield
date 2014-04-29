@@ -110,7 +110,7 @@
 	// or the tab containing the map gets selected (google map
 	// must be visible to properly initialize)
 	$.entwine('ss', function($) {
-		$('.tab[aria-hidden="false"]).entwine({
+		$('.tab[aria-hidden="false"]').entwine({
 			onmatch: function() {
 				if(gmapsAPILoaded) {
 					init();
