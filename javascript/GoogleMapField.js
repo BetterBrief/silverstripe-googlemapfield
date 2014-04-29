@@ -107,8 +107,10 @@
 	}
 
 	// Set the init method to re-run if the page is saved or pjaxed
+	// or the tab containing the map gets selected (google map
+	// must be visible to properly initialize)
 	$.entwine('ss', function($) {
-		$('.googlemapfield').entwine({
+		$('.tab[aria-hidden="false"]).entwine({
 			onmatch: function() {
 				if(gmapsAPILoaded) {
 					init();
