@@ -96,7 +96,7 @@
 	}
 
 	function init() {
-		var mapFields = $('.googlemapfield');
+		var mapFields = $('.tab[aria-hidden="false"] .googlemapfield');
 		mapFields.each(initField);
 	}
 
@@ -106,9 +106,9 @@
 		init();
 	}
 
-	// Set the init method to re-run if the page is saved or pjaxed
+	// Set the init method to re-run if the page is saved, pjaxed or a tab switched
 	$.entwine('ss', function($) {
-		$('.googlemapfield').entwine({
+		$('.tab[aria-hidden="false"]').entwine({
 			onmatch: function() {
 				if(gmapsAPILoaded) {
 					init();
