@@ -14,6 +14,8 @@ class GoogleMapField extends FormField {
 				'lat' => 'Lat',
 				'lng' => 'Lng',
 			),
+			'showSearchBox' => true,
+			'apikey' => null,
 		),
 		$js_inserted = false;
 
@@ -46,8 +48,9 @@ class GoogleMapField extends FormField {
 	}
 
 	public function Field($properties = array()) {
+		$key = $this->options['apikey'] ? "&key=".$this->options['apikey'] : "";
 		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
-		Requirements::javascript('//google.com/maps/api/js?sensor=false&callback=googlemapfieldInit');
+		Requirements::javascript("//maps.googleapis.com/maps/api/js?callback=googlemapfieldInit".$key);
 		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
 		$jsOptions = array(
 			'coords' => array($this->getLatData(), $this->getLngData()),
@@ -56,9 +59,12 @@ class GoogleMapField extends FormField {
 				'mapTypeId' => 'ROADMAP',
 			),
 		);
-
+		if(!$this->options['showSearchBox']){
+			$this->children->removeByName("Search");
+		}
 		$jsOptions = array_replace_recursive($jsOptions, $this->options);
 		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
+
 		return parent::Field($properties);
 	}
 
