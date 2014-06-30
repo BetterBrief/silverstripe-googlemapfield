@@ -107,14 +107,16 @@
 	}
 
 	// Set the init method to re-run if the page is saved or pjaxed
-	$.entwine('ss', function($) {
-		$('.googlemapfield').entwine({
-			onmatch: function() {
-				if(gmapsAPILoaded) {
-					init();
+	if($.entwine){
+		$.entwine('ss', function($) {
+			$('.googlemapfield').entwine({
+				onmatch: function() {
+					if(gmapsAPILoaded) {
+						init();
+					}
 				}
-			}
+			});
 		});
-	});
+	}
 
 }(jQuery));
