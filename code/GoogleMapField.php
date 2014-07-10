@@ -38,6 +38,8 @@ class GoogleMapField extends FormField {
 			'lat' => 'Lat',
 			'lng' => 'Lng',
 		),
+		'showSearchBox' => true,
+		'apiKey' => null,
 	);
 
 	/**
@@ -79,7 +81,7 @@ class GoogleMapField extends FormField {
 	 * {@inheritdoc}
 	 */
 	public function Field($properties = array()) {
-		$key = $this->options['apikey'] ? "&key=".$this->options['apikey'] : "";
+		$key = $this->options['apiKey'] ? "&key=".$this->options['apiKey'] : "";
 		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
 		Requirements::javascript("//maps.googleapis.com/maps/api/js?callback=googlemapfieldInit".$key);
 		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
