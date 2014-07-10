@@ -35,11 +35,6 @@ class GoogleMapField extends FormField {
 	protected $options = array();
 
 	/**
-	 * @var boolean
-	 */
-	static protected $js_inserted = false;
-
-	/**
 	 * @param DataObject $data The controlling dataobject
 	 * @param string $title The title of the field
 	 * @param array $options Various settings for the field
