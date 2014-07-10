@@ -1,23 +1,38 @@
 <?php
 
+/**
+ * GoogleMapField
+ * Lets you record a precise location using latitude/longitude fields to a
+ * DataObject. Displays a map using the Google Maps API. The user may then
+ * choose where to place the marker; the landing coordinates are then saved.
+ * You can also search for locations using the search box, which uses the Google
+ * Maps Geocoding API.
+ * @author <@willmorgan>
+ */
 class GoogleMapField extends FormField {
 
-	protected
-		$data,
-		$latField,
-		$lngField,
-		$options = array();
+	protected $data;
 
-	protected static
-		$defaults = array(
-			'fieldNames' => array(
-				'lat' => 'Lat',
-				'lng' => 'Lng',
-			),
-			'showSearchBox' => true,
-			'apikey' => null,
-		),
-		$js_inserted = false;
+	/**
+	 * @var FormField
+	 */
+	protected $latField;
+
+	/**
+	 * @var FormField
+	 */
+	protected $lngField;
+
+	/**
+	 * @var FormField
+	 */
+	protected $zoomField;
+
+	/**
+	 * The merged version of the default and user specified options
+	 * @var array
+	 */
+	protected $options = array();
 
 	/**
 	 * @param DataObject $data The controlling dataobject
@@ -28,82 +43,194 @@ class GoogleMapField extends FormField {
 		$this->data = $data;
 
 		// Set up fieldnames
-		$this->options = array_merge(self::$defaults, $options);
+		$this->setupOptions($options);
 
-		$fieldNames = $this->getOption('fieldNames');
+		$this->setupChildren();
 
-		// Auto generate a name
-		$name = sprintf('%s_%s_%s', $data->class, $fieldNames['lat'], $fieldNames['lng']);
-
-		// Create the latitude/longitude hidden fields
-		$this->children = new FieldList(
-			$this->latField = HiddenField::create($name . '[' . $fieldNames['lat'] . ']', 'Lat', $this->getLatData())->addExtraClass('googlemapfield-latfield'),
-			$this->lngField = HiddenField::create($name . '[' . $fieldNames['lng'] . ']', 'Lng', $this->getLngData())->addExtraClass('googlemapfield-lngfield'),
-			TextField::create('Search')
-				->addExtraClass('googlemapfield-searchfield')
-				->setAttribute('placeholder', 'Search for a location')
-		);
-
-		parent::__construct($name, $title);
+		parent::__construct($this->getName(), $title);
 	}
 
+	// Auto generate a name
+	public function getName() {
+		$fieldNames = $this->getOption('field_names');
+		return sprintf(
+			'%s_%s_%s',
+			$this->data->class,
+			$fieldNames['Latitude'],
+			$fieldNames['Longitude']
+		);
+	}
+
+	/**
+	 * Merge options preserving the first level of array keys
+	 * @param array $options
+	 */
+	public function setupOptions(array $options) {
+		$this->options = static::config()->default_options;
+		foreach($this->options as $name => &$value) {
+			if(isset($options[$name])) {
+				if(is_array($value)) {
+					$value = array_merge($value, $options[$name]);
+				}
+				else {
+					$value = $options[$name];
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set up child hidden fields, and optionally the search box.
+	 * @return FieldList the children
+	 */
+	public function setupChildren() {
+		$name = $this->getName();
+
+		// Create the latitude/longitude hidden fields
+		$this->latField = HiddenField::create(
+			$name.'[Latitude]',
+			'Lat',
+			$this->recordFieldData('Latitude')
+		)->addExtraClass('googlemapfield-latfield');
+
+		$this->lngField = HiddenField::create(
+			$name.'[Longitude]',
+			'Lng',
+			$this->recordFieldData('Longitude')
+		)->addExtraClass('googlemapfield-lngfield');
+
+		$this->zoomField = HiddenField::create(
+			$name.'[Zoom]',
+			'Zoom',
+			$this->recordFieldData('Zoom')
+		)->addExtraClass('googlemapfield-zoomfield');
+
+		$this->children = new FieldList(
+			$this->latField,
+			$this->lngField,
+			$this->zoomField
+		);
+
+		if($this->options['show_search_box']) {
+			$this->children->push(
+				TextField::create('Search')
+				->addExtraClass('googlemapfield-searchfield')
+				->setAttribute('placeholder', 'Search for a location')
+			);
+		}
+
+		return $this->children;
+	}
+
+	/**
+	 * @param array $properties
+	 * @see https://developers.google.com/maps/documentation/javascript/reference
+	 * {@inheritdoc}
+	 */
 	public function Field($properties = array()) {
-		$key = $this->options['apikey'] ? "&key=".$this->options['apikey'] : "";
-		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
-		Requirements::javascript("//maps.googleapis.com/maps/api/js?callback=googlemapfieldInit".$key);
-		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
 		$jsOptions = array(
-			'coords' => array($this->getLatData(), $this->getLngData()),
+			'coords' => array(
+				$this->recordFieldData('Latitude'),
+				$this->recordFieldData('Longitude')
+			),
 			'map' => array(
-				'zoom' => 8,
+				'zoom' => $this->recordFieldData('Zoom') ?: $this->getOption('map.zoom'),
 				'mapTypeId' => 'ROADMAP',
 			),
 		);
-		if(!$this->options['showSearchBox']){
-			$this->children->removeByName("Search");
-		}
-		$jsOptions = array_replace_recursive($jsOptions, $this->options);
-		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
 
+		$jsOptions = array_replace_recursive($this->options, $jsOptions);
+		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
+		$this->requireDependencies();
 		return parent::Field($properties);
 	}
 
-	function setValue($value) {
-		$this->latField->setValue($value[$this->getLatField()]);
-		$this->lngField->setValue($value[$this->getLngField()]);
+	/**
+	 * Set up and include any frontend requirements
+	 * @return void
+	 */
+	protected function requireDependencies() {
+		$gmapsParams = array(
+			'callback' => 'googlemapfieldInit',
+		);
+		if($key = $this->getOption('api_key')) {
+			$gmapsParams['key'] = $key;
+		}
+		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
+		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
+		Requirements::javascript('//maps.googleapis.com/maps/api/js?' . http_build_query($gmapsParams));
+	}
+
+	/**
+	 * {@inheritdoc}
+	 */
+	public function setValue($record) {
+		$this->latField->setValue(
+			$record['Latitude']
+		);
+		$this->lngField->setValue(
+			$record['Longitude']
+		);
+		$this->zoomField->setValue(
+			$record['Zoom']
+		);
 		return $this;
 	}
 
+	/**
+	 * Take the latitude/longitude fields and save them to the DataObject.
+	 * {@inheritdoc}
+	 */
 	public function saveInto(DataObjectInterface $record) {
-		$record->setCastedField($this->getLatField(), $this->latField->dataValue());
-		$record->setCastedField($this->getLngField(), $this->lngField->dataValue());
+		$record->setCastedField($this->childFieldName('Latitude'), $this->latField->dataValue());
+		$record->setCastedField($this->childFieldName('Longitude'), $this->lngField->dataValue());
+		$record->setCastedField($this->childFieldName('Zoom'), $this->zoomField->dataValue());
 		return $this;
 	}
 
+	/**
+	 * @return FieldList The Latitude/Longitude fields
+	 */
 	public function getChildFields() {
 		return $this->children;
 	}
 
-	public function getLatField() {
-		$fieldNames = $this->getOption('fieldNames');
-		return $fieldNames['lat'];
+	protected function childFieldName($name) {
+		$fieldNames = $this->getOption('field_names');
+		return $fieldNames[$name];
 	}
 
-	public function getLngField() {
-		$fieldNames = $this->getOption('fieldNames');
-		return $fieldNames['lng'];
+	protected function recordFieldData($name) {
+		$fieldName = $this->childFieldName($name);
+		return $this->data->$fieldName ?: $this->getDefaultValue($name);
 	}
 
+	public function getDefaultValue($name) {
+		$fieldValues = $this->getOption('default_field_values');
+		return isset($fieldValues[$name]) ? $fieldValues[$name] : null;
+	}
+
+	/**
+	 * @return string The VALUE of the Latitude field
+	 */
 	public function getLatData() {
-		$fieldNames = $this->getOption('fieldNames');
-		return $this->data->$fieldNames['lat'];
+		$fieldNames = $this->getOption('field_names');
+		return $this->data->$fieldNames['Latitude'];
 	}
 
+	/**
+	 * @return string The VALUE of the Longitude field
+	 */
 	public function getLngData() {
-		$fieldNames = $this->getOption('fieldNames');
-		return $this->data->$fieldNames['lng'];
+		$fieldNames = $this->getOption('field_names');
+		return $this->data->$fieldNames['Longitude'];
 	}
 
+	/**
+	 * Get the merged option that was set on __construct
+	 * @param string $name The name of the option
+	 * @return mixed
+	 */
 	public function getOption($name) {
 		// Quicker execution path for "."-free names
 		if (strpos($name, '.') === false) {
@@ -124,6 +251,12 @@ class GoogleMapField extends FormField {
 		}
 	}
 
+	/**
+	 * Set an option for this field
+	 * @param string $name The name of the option to set
+	 * @param mixed $val The value of said option
+	 * @return $this
+	 */
 	public function setOption($name, $val) {
 		// Quicker execution path for "."-free names
 		if(strpos($name,'.') === false) {
