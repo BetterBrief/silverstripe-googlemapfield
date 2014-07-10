@@ -14,7 +14,7 @@
 			centre = new google.maps.LatLng(options.coords[0], options.coords[1]),
 			options = {
 				streetViewControl: false,
-				zoom: options.map.zoom,
+				zoom: options.map.zoom * 1,
 				center: centre,
 				mapTypeId: google.maps.MapTypeId[options.map.mapTypeId]
 			},
@@ -28,6 +28,7 @@
 			}),
 			latField = field.find('.googlemapfield-latfield'),
 			lngField = field.find('.googlemapfield-lngfield'),
+			zoomField = field.find('.googlemapfield-zoomfield'),
 			search = field.find('.googlemapfield-searchfield');
 
 		// Update the hidden fields and mark as changed
@@ -39,10 +40,15 @@
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
+
 			if (!init) {
 				// Mark as changed(?)
 				$('.cms-edit-form').addClass('changed');
 			}
+		}
+
+		function updateZoom() {
+			zoomField.val(map.getZoom());
 		}
 
 		function centreOnMarker() {
@@ -83,6 +89,8 @@
 		google.maps.event.addListener(marker, 'dragend', centreOnMarker);
 
 		google.maps.event.addListener(map, 'click', mapClicked);
+
+		google.maps.event.addListener(map, 'zoom_changed', updateZoom);
 
 		search.on({
 			'change': searchReady,

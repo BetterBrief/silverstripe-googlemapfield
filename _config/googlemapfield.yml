@@ -1,0 +1,13 @@
+GoogleMapField:
+  default_options:
+    api_key: null
+    show_search_box: true
+    field_names:
+      Latitude: 'Latitude'
+      Longitude: 'Longitude'
+      Zoom: 'Zoom'
+    map:
+      zoom: 14
+    default_field_values:
+      Latitude: 30
+      Longitude: 0
