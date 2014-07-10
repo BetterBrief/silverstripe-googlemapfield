@@ -115,10 +115,6 @@ class GoogleMapField extends FormField {
 	 * {@inheritdoc}
 	 */
 	public function Field($properties = array()) {
-		$key = $this->options['api_key'] ? "&key=".$this->options['api_key'] : "";
-		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
-		Requirements::javascript("//maps.googleapis.com/maps/api/js?callback=googlemapfieldInit".$key);
-		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
 		$jsOptions = array(
 			'coords' => array(
 				$this->recordFieldData('Latitude'),
@@ -132,8 +128,24 @@ class GoogleMapField extends FormField {
 
 		$jsOptions = array_replace_recursive($this->options, $jsOptions);
 		$this->setAttribute('data-settings', Convert::array2json($jsOptions));
-
+		$this->requireDependencies();
 		return parent::Field($properties);
+	}
+
+	/**
+	 * Set up and include any frontend requirements
+	 * @return void
+	 */
+	protected function requireDependencies() {
+		$gmapsParams = array(
+			'callback' => 'googlemapfieldInit',
+		);
+		if($key = $this->getOption('api_key')) {
+			$gmapsParams['key'] = $key;
+		}
+		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
+		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
+		Requirements::javascript('//maps.googleapis.com/maps/api/js?' . http_build_query($gmapsParams));
 	}
 
 	/**
