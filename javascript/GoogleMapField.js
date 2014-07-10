@@ -1,6 +1,6 @@
 /**
  * GoogleMapField.js
- * @author Will Morgan <will.morgan@betterbrief.co.uk>
+ * @author <@willmorgan>
  */
 (function($) {
 
