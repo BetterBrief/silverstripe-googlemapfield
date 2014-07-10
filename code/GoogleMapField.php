@@ -45,10 +45,46 @@ class GoogleMapField extends FormField {
 		// Set up fieldnames
 		$this->setupOptions($options);
 
-		$fieldNames = $this->getOption('field_names');
+		$this->setupChildren();
 
-		// Auto generate a name
-		$name = sprintf('%s_%s_%s', $data->class, $fieldNames['Latitude'], $fieldNames['Longitude']);
+		parent::__construct($this->getName(), $title);
+	}
+
+	// Auto generate a name
+	public function getName() {
+		$fieldNames = $this->getOption('field_names');
+		return sprintf(
+			'%s_%s_%s',
+			$this->data->class,
+			$fieldNames['Latitude'],
+			$fieldNames['Longitude']
+		);
+	}
+
+	/**
+	 * Merge options preserving the first level of array keys
+	 * @param array $options
+	 */
+	public function setupOptions(array $options) {
+		$this->options = static::config()->default_options;
+		foreach($this->options as $name => &$value) {
+			if(isset($options[$name])) {
+				if(is_array($value)) {
+					$value = array_merge($value, $options[$name]);
+				}
+				else {
+					$value = $options[$name];
+				}
+			}
+		}
+	}
+
+	/**
+	 * Set up child hidden fields, and optionally the search box.
+	 * @return FieldList the children
+	 */
+	public function setupChildren() {
+		$name = $this->getName();
 
 		// Create the latitude/longitude hidden fields
 		$this->latField = HiddenField::create(
@@ -83,25 +119,7 @@ class GoogleMapField extends FormField {
 			);
 		}
 
-		parent::__construct($name, $title);
-	}
-
-	/**
-	 * Merge options preserving the first level of array keys
-	 * @param array $options
-	 */
-	public function setupOptions(array $options) {
-		$this->options = static::config()->default_options;
-		foreach($this->options as $name => &$value) {
-			if(isset($options[$name])) {
-				if(is_array($value)) {
-					$value = array_merge($value, $options[$name]);
-				}
-				else {
-					$value = $options[$name];
-				}
-			}
-		}
+		return $this->children;
 	}
 
 	/**
