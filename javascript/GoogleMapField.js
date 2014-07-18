@@ -133,6 +133,20 @@
 					}
 				}
 			});
+			$('.cms-tabset-nav-primary li').entwine({
+				onclick: function() {
+					if(gmapsAPILoaded) {
+						init();
+					}
+				}
+			});
+			$('.ss-tabset li').entwine({
+				onclick: function() {
+					if(gmapsAPILoaded) {
+						init();
+					}
+				}
+			});
 		});
 	}
 
