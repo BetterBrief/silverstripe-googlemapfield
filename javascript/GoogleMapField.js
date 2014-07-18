@@ -123,17 +123,27 @@
 		init();
 	}
 
-	// Set the init method to re-run if the page is saved or pjaxed
-	if($.entwine){
-		$.entwine('ss', function($) {
-			$('.googlemapfield').entwine({
-				onmatch: function() {
-					if(gmapsAPILoaded) {
-						init();
-					}
+	// CMS stuff: set the init method to re-run if the page is saved or pjaxed
+	// there are no docs for the CMS implementation of entwine, so this is hacky
+	if(!!$.fn.entwine && $(document.body).hasClass('cms')) {
+		(function setupCMS() {
+			var matchFunction = function() {
+				if(gmapsAPILoaded) {
+					init();
 				}
+			};
+			$.entwine('ss', function($) {
+				$('.cms-tabset').entwine({
+					onmatch: matchFunction
+				});
+				$('.cms-tabset-nav-primary li').entwine({
+					onclick: matchFunction
+				});
+				$('.ss-tabset li').entwine({
+					onclick: matchFunction
+				});
 			});
-		});
+		}());
 	}
 
 }(jQuery));
