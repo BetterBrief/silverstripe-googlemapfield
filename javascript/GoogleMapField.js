@@ -8,18 +8,21 @@
 
 	// Run this code for every googlemapfield
 	function initField() {
-		var field = $(this),
-			fieldID = field.attr('data-field-id'), // identify its settings
-			options = JSON.parse(field.attr('data-settings')),
-			centre = new google.maps.LatLng(options.coords[0], options.coords[1]),
-			options = {
+		var field = $(this);
+		if(field.data('gmapfield-inited') === true) {
+			return;
+		}
+		field.data('gmapfield-inited', true);
+		var settings = JSON.parse(field.attr('data-settings')),
+			centre = new google.maps.LatLng(settings.coords[0], settings.coords[1]),
+			mapSettings = {
 				streetViewControl: false,
-				zoom: options.map.zoom * 1,
+				zoom: settings.map.zoom * 1,
 				center: centre,
-				mapTypeId: google.maps.MapTypeId[options.map.mapTypeId]
+				mapTypeId: google.maps.MapTypeId[settings.map.mapTypeId]
 			},
 			mapElement = field.find('.googlemapfield-map'),
-			map = new google.maps.Map(mapElement[0], options),
+			map = new google.maps.Map(mapElement[0], mapSettings),
 			marker = new google.maps.Marker({
 				position: map.getCenter(),
 				map: map,
@@ -36,7 +39,7 @@
 			var latCoord = latLng.lat(),
 				lngCoord = latLng.lng();
 
-			options.coords = [latCoord, lngCoord];
+			mapSettings.coords = [latCoord, lngCoord];
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
@@ -103,8 +106,14 @@
 
 	}
 
+	$.fn.gmapfield = function() {
+		return this.each(function() {
+			initField.call(this);
+		});
+	}
+
 	function init() {
-		var mapFields = $('.googlemapfield');
+		var mapFields = $('.googlemapfield:visible').gmapfield();
 		mapFields.each(initField);
 	}
 
