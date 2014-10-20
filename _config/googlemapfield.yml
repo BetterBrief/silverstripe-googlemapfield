@@ -1,3 +1,6 @@
+---
+Name: googlemapfield
+---
 GoogleMapField:
   default_options:
     api_key: null
