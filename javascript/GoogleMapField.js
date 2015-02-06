@@ -132,7 +132,7 @@
 					init();
 				}
 			};
-			$.entwine('ss', function($) {
+			$.entwine('googlemapfield', function($) {
 				$('.cms-tabset').entwine({
 					onmatch: matchFunction
 				});
@@ -141,6 +141,9 @@
 				});
 				$('.ss-tabset li').entwine({
 					onclick: matchFunction
+				});
+				$('.cms-edit-form').entwine({
+					onmatch: matchFunction
 				});
 			});
 		}());
