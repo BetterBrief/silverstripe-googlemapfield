@@ -9,6 +9,7 @@ GoogleMapField:
       Latitude: 'Latitude'
       Longitude: 'Longitude'
       Zoom: 'Zoom'
+      Bounds: 'Bounds'
     map:
       zoom: 14
     default_field_values:
