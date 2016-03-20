@@ -27,6 +27,11 @@ class GoogleMapField extends FormField {
 	 * @var FormField
 	 */
 	protected $zoomField;
+	
+	/**
+	 * @var FormField
+	 */
+	protected $boundsField;
 
 	/**
 	 * The merged version of the default and user specified options
@@ -104,11 +109,16 @@ class GoogleMapField extends FormField {
 			'Zoom',
 			$this->recordFieldData('Zoom')
 		)->addExtraClass('googlemapfield-zoomfield');
-
+		$this->boundsField = HiddenField::create(
+			$name.'[Bounds]',
+			'Bounds',
+			$this->recordFieldData('Bounds')
+		)->addExtraClass('googlemapfield-boundsfield');
 		$this->children = new FieldList(
 			$this->latField,
 			$this->lngField,
-			$this->zoomField
+			$this->zoomField,
+			$this->boundsField
 		);
 
 		if($this->options['show_search_box']) {
@@ -174,6 +184,9 @@ class GoogleMapField extends FormField {
 		$this->zoomField->setValue(
 			$record['Zoom']
 		);
+		$this->boundsField->setValue(
+			$record['Bounds']
+		);
 		return $this;
 	}
 
@@ -185,6 +198,7 @@ class GoogleMapField extends FormField {
 		$record->setCastedField($this->childFieldName('Latitude'), $this->latField->dataValue());
 		$record->setCastedField($this->childFieldName('Longitude'), $this->lngField->dataValue());
 		$record->setCastedField($this->childFieldName('Zoom'), $this->zoomField->dataValue());
+		$record->setCastedField($this->childFieldName('Bounds'), $this->boundsField->dataValue());
 		return $this;
 	}
 

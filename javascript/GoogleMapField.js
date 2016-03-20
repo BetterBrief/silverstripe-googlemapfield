@@ -32,6 +32,7 @@
 			latField = field.find('.googlemapfield-latfield'),
 			lngField = field.find('.googlemapfield-lngfield'),
 			zoomField = field.find('.googlemapfield-zoomfield'),
+			boundsField = field.find('.googlemapfield-boundsfield'),
 			search = field.find('.googlemapfield-searchfield');
 
 		// Update the hidden fields and mark as changed
@@ -43,6 +44,7 @@
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
+			updateBounds();
 
 			if (!init) {
 				// Mark as changed(?)
@@ -52,6 +54,16 @@
 
 		function updateZoom() {
 			zoomField.val(map.getZoom());
+		}
+		
+		function updateBounds() {
+			var bounds = JSON.stringify(map.getBounds().toJSON());
+			boundsField.val(bounds);
+		}
+
+		function zoomChanged() {
+			updateZoom();
+			updateBounds();
 		}
 
 		function centreOnMarker() {
@@ -63,7 +75,7 @@
 		function mapClicked(ev) {
 			var center = ev.latLng;
 			marker.setPosition(center);
-			updateField(center);
+			centreOnMarker();
 		}
 
 		function geoSearchComplete(result, status) {
@@ -87,13 +99,16 @@
 		}
 
 		// Populate the fields to the current centre
-		updateField(map.getCenter(), true);
+		google.maps.event.addListenerOnce(map, 'idle', function(){
+			updateField(map.getCenter(), true);
+			updateZoom();
+		});
 
 		google.maps.event.addListener(marker, 'dragend', centreOnMarker);
 
 		google.maps.event.addListener(map, 'click', mapClicked);
 
-		google.maps.event.addListener(map, 'zoom_changed', updateZoom);
+		google.maps.event.addListener(map, 'zoom_changed', zoomChanged);
 
 		search.on({
 			'change': searchReady,
