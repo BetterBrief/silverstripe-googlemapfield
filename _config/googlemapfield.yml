@@ -1,5 +1,6 @@
 ---
 Name: googlemapfield
+Before: '*'
 ---
 BetterBrief\GoogleMapField\GoogleMapField:
   default_options:
