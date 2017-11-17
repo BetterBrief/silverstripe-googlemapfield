@@ -25,7 +25,8 @@
     },
     "extra": {
         "expose": [
-            "client/dist"
+            "client/css",
+            "client/js"
         ],
         "installer-name": "googlemapfield"
     }
