@@ -1,7 +1,7 @@
 ---
 Name: googlemapfield
 ---
-TimeZoneOne\GoogleMapField\GoogleMapField:
+BetterBrief\GoogleMapField\GoogleMapField:
   default_options:
     api_key: null
     show_search_box: true
