@@ -178,8 +178,8 @@ class GoogleMapField extends FormField {
 		if($key = $this->getOption('api_key')) {
 			$gmapsParams['key'] = $key;
 		}
-        Requirements::css('betterbrief/silverstripe-googlemapfield: css/GoogleMapField.css');
-        Requirements::javascript('betterbrief/silverstripe-googlemapfield: javascript/GoogleMapField.js');
+        Requirements::css('betterbrief/silverstripe-googlemapfield: client/GoogleMapField.css');
+        Requirements::javascript('betterbrief/silverstripe-googlemapfield: client/GoogleMapField.js');
 		Requirements::javascript('//maps.googleapis.com/maps/api/js?' . http_build_query($gmapsParams));
 	}
 
