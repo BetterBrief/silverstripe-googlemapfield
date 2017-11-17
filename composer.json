@@ -1,6 +1,6 @@
 {
     "name": "betterbrief/silverstripe-googlemapfield",
-    "type": "silverstripe-vendor-module",
+    "type": "silverstripe-vendormodule",
     "description": "Save locations using latitude/longitude DataObject fields.",
     "version": "2.0",
     "keywords": ["maps","google", "googlemapfield", "silverstripe", "map", "geolocation"],
