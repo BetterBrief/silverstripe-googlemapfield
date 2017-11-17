@@ -10,7 +10,7 @@
  * @author <@willmorgan>
  */
 
-namespace BetterBrief\GoogleMapField;
+namespace TimeZoneOne\GoogleMapField;
 
 use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\DataObject;
@@ -178,8 +178,8 @@ class GoogleMapField extends FormField {
 		if($key = $this->getOption('api_key')) {
 			$gmapsParams['key'] = $key;
 		}
-        Requirements::css('betterbrief/silverstripe-googlemapfield: client/css/GoogleMapField.css');
-        Requirements::javascript('betterbrief/silverstripe-googlemapfield: client/js/GoogleMapField.js');
+        Requirements::css('timezoneone/silverstripe-googlemapfield: client/css/GoogleMapField.css');
+        Requirements::javascript('timezoneone/silverstripe-googlemapfield: client/js/GoogleMapField.js');
 		Requirements::javascript('//maps.googleapis.com/maps/api/js?' . http_build_query($gmapsParams));
 	}
 
