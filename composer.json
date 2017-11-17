@@ -18,6 +18,11 @@
         "composer/installers": "~1.0",
         "silverstripe/framework": "^4"
     },
+    "autoload": {
+        "psr-4": {
+            "BetterBrief\\GoogleMapField\\": "src/"
+        }
+    },
     "extra": {
         "expose": [
             "client/dist"
