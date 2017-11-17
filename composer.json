@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "BetterBrief\\GoogleMapField\\": "src/"
+            "TimeZoneOne\\GoogleMapField\\": "src/"
         }
     },
     "extra": {
