@@ -1,6 +1,6 @@
 {
     "name": "betterbrief/silverstripe-googlemapfield",
-    "type": "silverstripe-module",
+    "type": "silverstripe-vendormodule",
     "description": "Save locations using latitude/longitude DataObject fields.",
     "keywords": ["maps","google", "googlemapfield", "silverstripe", "map", "geolocation"],
     "homepage": "http://github.com/BetterBrief/googlemapfield",
@@ -13,10 +13,19 @@
         }
     ],
     "require": {
-        "php": ">=5.3.0",
-        "composer/installers": "~1.0"
+        "php": ">=5.5.0",
+        "composer/installers": "~1.0",
+        "silverstripe/framework": "^4"
     },
-    "extra" : {
-        "installer-name": "googlemapfield"
+    "autoload": {
+        "psr-4": {
+            "BetterBrief\\": "src/"
+        }
+    },
+    "extra": {
+        "expose": [
+            "client/css",
+            "client/js"
+        ]
     }
 }

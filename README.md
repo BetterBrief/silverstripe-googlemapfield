@@ -17,6 +17,13 @@ You can also search for locations using the search box, which uses the Google Ma
 |------|-------|-----------|
 |`field_names`|See `GoogleMapField.yml`'s `default_options.field_names`|A map of field names to save the map data into your object.|
 
+##### make sure `api_key` config added in site yml file
+```yml
+BetterBrief\GoogleMapField:
+  default_options:
+    api_key: 'GOOGLE_API_KEY'
+```
+
 ##### `Field` options
 
 |Option|Default|Description|

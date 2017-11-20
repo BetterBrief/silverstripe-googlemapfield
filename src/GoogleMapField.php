@@ -9,6 +9,18 @@
  * Maps Geocoding API.
  * @author <@willmorgan>
  */
+
+namespace BetterBrief;
+
+use SilverStripe\Forms\FormField;
+use SilverStripe\ORM\DataObject;
+use SilverStripe\Forms\HiddenField;
+use SilverStripe\Forms\TextField;
+use SilverStripe\View\Requirements;
+use SilverStripe\ORM\DataObjectInterface;
+use SilverStripe\Forms\FieldList;
+use SilverStripe\Core\Convert;
+
 class GoogleMapField extends FormField {
 
 	protected $data;
@@ -166,15 +178,15 @@ class GoogleMapField extends FormField {
 		if($key = $this->getOption('api_key')) {
 			$gmapsParams['key'] = $key;
 		}
-		Requirements::css(GOOGLEMAPFIELD_BASE .'/css/GoogleMapField.css');
-		Requirements::javascript(GOOGLEMAPFIELD_BASE .'/javascript/GoogleMapField.js');
+        Requirements::css('betterbrief/silverstripe-googlemapfield: client/css/GoogleMapField.css');
+        Requirements::javascript('betterbrief/silverstripe-googlemapfield: client/js/GoogleMapField.js');
 		Requirements::javascript('//maps.googleapis.com/maps/api/js?' . http_build_query($gmapsParams));
 	}
 
 	/**
 	 * {@inheritdoc}
 	 */
-	public function setValue($record) {
+	public function setValue($record, $data = null) {
 		$this->latField->setValue(
 			$record['Latitude']
 		);
