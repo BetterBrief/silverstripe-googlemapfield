@@ -2,7 +2,7 @@
 Name: googlemapfield
 Before: '*'
 ---
-BetterBrief\GoogleMapField\GoogleMapField:
+BetterBrief\GoogleMapField:
   default_options:
     api_key: null
     show_search_box: true

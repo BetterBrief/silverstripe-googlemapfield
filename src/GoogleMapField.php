@@ -10,7 +10,7 @@
  * @author <@willmorgan>
  */
 
-namespace BetterBrief\GoogleMapField;
+namespace BetterBrief;
 
 use SilverStripe\Forms\FormField;
 use SilverStripe\ORM\DataObject;

@@ -17,7 +17,7 @@ You can also search for locations using the search box, which uses the Google Ma
 
 ##### make sure `api_key` config added in site yml file
 ```yml
-BetterBrief\GoogleMapField\GoogleMapField:
+BetterBrief\GoogleMapField:
   default_options:
     api_key: 'GOOGLE_API_KEY'
 ```
