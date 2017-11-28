@@ -15,8 +15,8 @@ Supports SilverStripe 3.1
 
 ### Minimal configuration
 
-Given your DataObject uses the field names `Lat` and `Lng` for storing the latitude and longitude respectively then the
-following is a minimal setup to have the map show in the CMS:
+Given your DataObject uses the field names `Latitude` and `Longitude` for storing the latitude and longitude
+respectively then the following is a minimal setup to have the map show in the CMS:
 
 ```php
 class Store extends DataObject
