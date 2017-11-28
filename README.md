@@ -21,7 +21,7 @@ following is a minimal setup to have the map show in the CMS:
 ```php
 class Store extends DataObject
 {
-    public static $db = array(
+    private static $db = array(
         'Title' => 'Varchar(255)',
         'Latitude' => 'Varchar',
         'Longitude' => 'Varchar',
