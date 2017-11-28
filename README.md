@@ -35,8 +35,8 @@ class Store extends DataObject
         ));
         
         // remove the lat / lng fields from the CMS
-        $fields->removeFieldFromTab('Root.Main', 'Lat');
-        $fields->removeFieldFromTab('Root.Main', 'Lng');
+        $fields->removeFieldFromTab('Root.Main', 'Latitude');
+        $fields->removeFieldFromTab('Root.Main', 'Longitude');
         
         return $fields;
     }
