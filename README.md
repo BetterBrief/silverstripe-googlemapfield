@@ -24,11 +24,11 @@ use BetterBrief\GoogleMapField;
 
 class Store extends DataObject
 {
-    private static $db = array(
+    private static $db = [
         'Title' => 'Varchar(255)',
         'Latitude' => 'Varchar',
         'Longitude' => 'Varchar',
-    );
+    ];
     
     public function getCMSFields() {
         $fields = parent::getCMSFiels();
@@ -40,8 +40,7 @@ class Store extends DataObject
         ));
         
         // remove the lat / lng fields from the CMS
-        $fields->removeFieldFromTab('Root.Main', 'Latitude');
-        $fields->removeFieldFromTab('Root.Main', 'Longitude');
+        $fields->removeFieldsFromTab('Root.Main', ['Latitude', 'Longitude']);
         
         return $fields;
     }
@@ -73,14 +72,14 @@ use BetterBrief\GoogleMapField;
 $field = new GoogleMapField(
     $dataObject,
     'FieldName',
-    array(
+    [
         'api_key' => 'my-api-key',
         'show_search_box' => false,
-        'map' => array(
+        'map' => [
             'zoom' => 10,
-        ),
+        ],
         ...
-    )
+    ]
 );
 ```
 
@@ -97,11 +96,11 @@ use BetterBrief\GoogleMapField;
 $field = new GoogleMapField(
     $object,
     'Location',
-    array(
-        'map' => array(
+    [
+        'map' => [
             'mapTypeId' => 'SATELLITE',
-        ),
-    )
+        ],
+    ]
 );
 ```
 
