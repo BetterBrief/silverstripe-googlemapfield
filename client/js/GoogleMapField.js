@@ -44,18 +44,22 @@
 
 			latField.val(latCoord);
 			lngField.val(lngCoord);
-			updateBounds();
+			updateBounds(init);
 
+			// Mark form as changed if this isn't initialisation
 			if (!init) {
-				// Mark as changed(?)
 				$('.cms-edit-form').addClass('changed');
 			}
 		}
 
-		function updateZoom() {
+		function updateZoom(init) {
 			zoomField.val(map.getZoom());
+			// Mark form as changed if this isn't initialisation
+			if (!init) {
+				$('.cms-edit-form').addClass('changed');
+			}
 		}
-		
+
 		function updateBounds() {
 			var bounds = JSON.stringify(map.getBounds().toJSON());
 			boundsField.val(bounds);
@@ -101,7 +105,7 @@
 		// Populate the fields to the current centre
 		google.maps.event.addListenerOnce(map, 'idle', function(){
 			updateField(map.getCenter(), true);
-			updateZoom();
+			updateZoom(init);
 		});
 
 		google.maps.event.addListener(marker, 'dragend', centreOnMarker);
